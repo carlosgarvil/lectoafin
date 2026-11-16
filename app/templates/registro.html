@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block titulo %}Registro{% endblock %}
+{% block contenido %}
+<form method="post" class="tarjeta formulario">
+  <h1>Crear cuenta</h1>
+  <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+  {% if config.CODIGO_REGISTRO %}
+    <label>Código de clase <input name="codigo" required></label>
+  {% endif %}
+  <label>Alias <small>(no uses tu nombre completo)</small>
+    <input name="alias" value="{{ alias or '' }}" minlength="3" maxlength="40" required autocomplete="username">
+  </label>
+  <label>Grupo
+    <input name="grupo" value="{{ grupo or '' }}" placeholder="p. ej. 1º BACH A" maxlength="20">
+  </label>
+  <label>Contraseña <input name="password" type="password" minlength="6" required autocomplete="new-password"></label>
+  <label>Repite la contraseña <input name="password2" type="password" minlength="6" required autocomplete="new-password"></label>
+  <button class="boton">Registrarme</button>
+</form>
+{% endblock %}

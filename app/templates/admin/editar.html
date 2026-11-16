@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block titulo %}Editar libro{% endblock %}
+{% block contenido %}
+<form method="post" class="tarjeta formulario">
+  <h1>Editar libro</h1>
+  <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+  <label>Título* <input name="titulo" value="{{ libro.titulo }}" required></label>
+  <label>Autor/a <input name="autor" value="{{ libro.autor }}"></label>
+  <label>Año <input name="anio" type="number" value="{{ libro.anio or '' }}"></label>
+  <label>URL de la portada <input name="portada_url" type="url" value="{{ libro.portada_url }}"></label>
+  <label>Sinopsis <textarea name="sinopsis" rows="5">{{ libro.sinopsis }}</textarea></label>
+  <button class="boton">Guardar</button>
+  <a href="{{ url_for('admin.libros') }}">Cancelar</a>
+</form>
+{% endblock %}

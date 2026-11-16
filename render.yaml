@@ -1,0 +1,30 @@
+# Blueprint de Render: describe la infraestructura como código.
+# Render lo lee al crear un "New > Blueprint" y crea la web y la base de datos.
+services:
+  - type: web
+    name: lectoafin
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn run:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.1
+      - key: SECRET_KEY
+        generateValue: true          # Render genera una clave aleatoria
+      - key: DATABASE_URL
+        fromDatabase:
+          name: lectoafin-db
+          property: connectionString
+      - key: ADMIN_ALIAS
+        value: profe
+      - key: ADMIN_PASSWORD
+        sync: false                  # Render te la pedirá al crear el Blueprint
+      - key: CODIGO_REGISTRO
+        sync: false                  # opcional: déjalo vacío si no quieres código de clase
+
+databases:
+  - name: lectoafin-db
+    plan: free
+    databaseName: lectoafin
+    user: lectoafin

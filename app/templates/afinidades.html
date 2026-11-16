@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block titulo %}Afinidades{% endblock %}
+{% block contenido %}
+<h1>Tus afinidades lectoras</h1>
+<p class="nota">
+  La afinidad es el porcentaje de libros que os gustan a los dos sobre el total de libros que
+  le gustan a alguno de los dos (<em>índice de Jaccard</em>). Hay conexión a partir del
+  {{ (config.UMBRAL_AFINIDAD * 100)|round|int }} % y con al menos {{ config.MIN_LIBROS_COMUNES }} libros en común.
+</p>
+
+<h2>📖 Conexiones <span class="pildora">{{ conexiones|length }}</span></h2>
+{% if conexiones %}
+  <ul class="lista-afinidad">
+    {% for r in conexiones %}
+      <li class="tarjeta conexion">
+        <div class="cabecera-afinidad">
+          <strong>{{ r.usuario.alias }}</strong> <small>{{ r.usuario.grupo }}</small>
+          <span class="porcentaje">{{ (r.afinidad * 100)|round|int }} %</span>
+        </div>
+        <div class="barra-afinidad"><span style="width: {{ (r.afinidad * 100)|round|int }}%"></span></div>
+        <p>Os gustan: {% for id in r.comunes %}<em>{{ libros[id].titulo }}</em>{{ ", " if not loop.last }}{% endfor %}</p>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="vacio">Aún no tienes conexiones. ¡Valora más libros para encontrarlas!</p>
+{% endif %}
+
+{% if resto %}
+  <details>
+    <summary>Ver afinidad con el resto ({{ resto|length }})</summary>
+    <ul class="lista-simple">
+      {% for r in resto %}
+        <li>{{ r.usuario.alias }} · {{ (r.afinidad * 100)|round|int }} % · {{ r.comunes|length }} en común</li>
+      {% endfor %}
+    </ul>
+  </details>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block titulo %}Panel{% endblock %}
+{% block contenido %}
+<h1>Panel del profesorado</h1>
+
+<div class="cifras">
+  <div class="cifra"><span>{{ n_alumnos }}</span>alumnos</div>
+  <div class="cifra"><span>{{ n_libros }}</span>libros activos</div>
+  <div class="cifra"><span>{{ total_votos }}</span>valoraciones</div>
+  <div class="cifra"><span>{{ pct_gusta }} %</span>son «me gusta»</div>
+</div>
+
+<h2>Libros más valorados</h2>
+{% if ranking %}
+  <ol class="lista-simple">
+    {% for libro, likes in ranking %}<li>{{ libro.titulo }} — {{ likes }} ♥</li>{% endfor %}
+  </ol>
+{% else %}<p class="vacio">Todavía no hay valoraciones.</p>{% endif %}
+
+<h2>Conexiones detectadas <span class="pildora">{{ conexiones|length }}</span></h2>
+<p class="nota">Úsalas para formar grupos de lectura, parejas de debate, etc.</p>
+{% if conexiones %}
+  <table class="tabla">
+    <thead><tr><th>Alumno/a</th><th>Alumno/a</th><th>Afinidad</th><th>Libros en común</th></tr></thead>
+    <tbody>
+      {% for p in conexiones %}
+        <tr>
+          <td>{{ p.a.alias }} <small>{{ p.a.grupo }}</small></td>
+          <td>{{ p.b.alias }} <small>{{ p.b.grupo }}</small></td>
+          <td>{{ (p.afinidad * 100)|round|int }} %</td>
+          <td>{% for id in p.comunes %}{{ libros[id].titulo }}{{ ", " if not loop.last }}{% endfor %}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}<p class="vacio">Aún no hay conexiones.</p>{% endif %}
+{% endblock %}

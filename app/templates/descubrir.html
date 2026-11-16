@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block titulo %}Descubrir{% endblock %}
+{% block contenido %}
+<section class="descubrir">
+  <p class="contador" id="contador">Cargando…</p>
+
+  <div class="mazo" id="mazo">
+    {# La tarjeta la rellena descubrir.js con los datos que devuelve /api/siguiente #}
+  </div>
+
+  <div class="botones-voto" id="botones">
+    <button class="voto no" id="btn-no" aria-label="No me gusta" title="No me gusta (←)">✕</button>
+    <button class="voto si" id="btn-si" aria-label="Me gusta" title="Me gusta (→)">♥</button>
+  </div>
+  <p class="nota">Arrastra la tarjeta o usa las flechas ← → del teclado.</p>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='descubrir.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,10 @@
+{# Portada del libro: imagen si existe; si no, un "lomo" de color generado a partir del id #}
+{% macro portada(libro, clase='portada') %}
+  {% if libro.portada_url %}
+    <img class="{{ clase }}" src="{{ libro.portada_url }}" alt="Portada de {{ libro.titulo }}" loading="lazy">
+  {% else %}
+    <div class="{{ clase }} sin-portada" style="--tono: {{ (libro.id * 47) % 360 }}">
+      <span>{{ libro.titulo }}</span>
+    </div>
+  {% endif %}
+{% endmacro %}

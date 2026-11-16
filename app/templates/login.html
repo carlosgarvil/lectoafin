@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block titulo %}Entrar{% endblock %}
+{% block contenido %}
+<form method="post" class="tarjeta formulario">
+  <h1>Entrar</h1>
+  <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+  <label>Alias <input name="alias" required autofocus autocomplete="username"></label>
+  <label>Contraseña <input name="password" type="password" required autocomplete="current-password"></label>
+  <button class="boton">Entrar</button>
+  <p class="nota">¿No tienes cuenta? <a href="{{ url_for('auth.registro') }}">Regístrate</a></p>
+</form>
+{% endblock %}

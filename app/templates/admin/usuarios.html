@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block titulo %}Alumnado{% endblock %}
+{% block contenido %}
+<h1>Alumnado <span class="pildora">{{ alumnos|length }}</span></h1>
+<table class="tabla">
+  <thead><tr><th>Alias</th><th>Grupo</th><th>Valoraciones</th><th>Alta</th><th></th></tr></thead>
+  <tbody>
+    {% for u, n in alumnos %}
+      <tr>
+        <td>{{ u.alias }}</td>
+        <td>{{ u.grupo }}</td>
+        <td>{{ n }}</td>
+        <td>{{ u.creado.strftime('%d/%m/%Y') if u.creado }}</td>
+        <td>
+          <form method="post" action="{{ url_for('admin.borrar_usuario', usuario_id=u.id) }}"
+                onsubmit="return confirm('¿Eliminar a este usuario y sus valoraciones?')">
+            <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+            <button class="enlace peligro">Eliminar</button>
+          </form>
+        </td>
+      </tr>
+    {% else %}
+      <tr><td colspan="5" class="vacio">Nadie se ha registrado todavía.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% from "_portada.html" import portada %}
+{% block titulo %}Biblioteca{% endblock %}
+{% block contenido %}
+<h1>Biblioteca</h1>
+<p class="nota">Solo los libros <strong>activos</strong> aparecen al alumnado.
+  También puedes <a href="{{ url_for('admin.buscar') }}">importar desde Open Library</a>.</p>
+
+<details class="tarjeta">
+  <summary><strong>➕ Añadir libro a mano</strong></summary>
+  <form method="post" class="formulario">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <label>Título* <input name="titulo" required></label>
+    <label>Autor/a <input name="autor"></label>
+    <label>Año <input name="anio" type="number" min="0" max="2100"></label>
+    <label>URL de la portada <input name="portada_url" type="url"></label>
+    <label>Sinopsis <textarea name="sinopsis" rows="3"></textarea></label>
+    <button class="boton">Añadir</button>
+  </form>
+</details>
+
+<table class="tabla">
+  <thead><tr><th></th><th>Título</th><th>Autor/a</th><th>Votos</th><th>Estado</th><th></th></tr></thead>
+  <tbody>
+    {% for libro in libros %}
+      <tr class="{{ '' if libro.activo else 'inactivo' }}">
+        <td>{{ portada(libro, 'portada-tabla') }}</td>
+        <td>{{ libro.titulo }} {% if libro.anio %}<small>({{ libro.anio }})</small>{% endif %}</td>
+        <td>{{ libro.autor }}</td>
+        <td>{{ libro.votos|length }}</td>
+        <td>
+          <form method="post" action="{{ url_for('admin.activar', libro_id=libro.id) }}">
+            <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+            <button class="pildora {{ 'activo' if libro.activo }}">{{ 'Activo' if libro.activo else 'Oculto' }}</button>
+          </form>
+        </td>
+        <td class="acciones-fila">
+          <a href="{{ url_for('admin.editar', libro_id=libro.id) }}">Editar</a>
+          <form method="post" action="{{ url_for('admin.borrar', libro_id=libro.id) }}"
+                onsubmit="return confirm('¿Borrar el libro y todas sus valoraciones?')">
+            <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+            <button class="enlace peligro">Borrar</button>
+          </form>
+        </td>
+      </tr>
+    {% else %}
+      <tr><td colspan="6" class="vacio">La biblioteca está vacía.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

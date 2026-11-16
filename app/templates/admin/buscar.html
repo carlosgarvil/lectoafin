@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block titulo %}Importar libros{% endblock %}
+{% block contenido %}
+<h1>Importar desde Open Library</h1>
+<form method="get" class="buscador">
+  <input name="q" value="{{ q }}" placeholder="Título, autor/a o ISBN" autofocus>
+  <button class="boton">Buscar</button>
+</form>
+
+{% if error %}<div class="aviso aviso-error">{{ error }}</div>{% endif %}
+
+{% if resultados %}
+  <ul class="rejilla">
+    {% for r in resultados %}
+      <li class="mini">
+        {% if r.portada_url %}<img class="portada-mini" src="{{ r.portada_url }}" alt="" loading="lazy">
+        {% else %}<div class="portada-mini sin-portada" style="--tono: {{ loop.index * 53 }}"><span>{{ r.titulo }}</span></div>{% endif %}
+        <div>
+          <strong>{{ r.titulo }}</strong>
+          <small>{{ r.autor }}{% if r.anio %} · {{ r.anio }}{% endif %}</small>
+          {% if r.openlibrary_id in ya_importados %}
+            <span class="pildora activo">Ya en la biblioteca</span>
+          {% else %}
+            <form method="post" action="{{ url_for('admin.importar') }}">
+              <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+              {% for campo in ['openlibrary_id', 'titulo', 'autor', 'anio', 'portada_url'] %}
+                <input type="hidden" name="{{ campo }}" value="{{ r[campo] or '' }}">
+              {% endfor %}
+              <input type="hidden" name="q" value="{{ q }}">
+              <button class="boton pequeño">Añadir</button>
+            </form>
+          {% endif %}
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+{% elif q and not error %}
+  <p class="vacio">Sin resultados para «{{ q }}».</p>
+{% endif %}
+{% endblock %}

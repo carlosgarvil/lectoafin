@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block titulo %}Inicio{% endblock %}
+{% block contenido %}
+<section class="portada-inicio">
+  <h1>Encuentra a tus compañeros de lectura</h1>
+  <p class="destacado">
+    Valora los libros de la biblioteca del instituto con <strong>me gusta</strong> o
+    <strong>no me gusta</strong>. Lectoafín compara tus gustos con los del resto y te muestra
+    con quién tienes más afinidad lectora.
+  </p>
+  <div class="acciones">
+    <a class="boton" href="{{ url_for('auth.registro') }}">Crear cuenta</a>
+    <a class="boton secundario" href="{{ url_for('auth.login') }}">Ya tengo cuenta</a>
+  </div>
+
+  <ol class="pasos">
+    <li><strong>Descubre</strong> los libros que ha elegido el profesorado.</li>
+    <li><strong>Valora</strong> cada libro: ¿te gusta o no?</li>
+    <li><strong>Conecta</strong> con quien comparte tus gustos y forma tu club de lectura.</li>
+  </ol>
+  <p class="nota">Usa un alias, no tu nombre completo. Aquí solo se comparten gustos lectores.</p>
+</section>
+{% endblock %}

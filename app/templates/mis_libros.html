@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% from "_portada.html" import portada %}
+{% block titulo %}Mis libros{% endblock %}
+{% block contenido %}
+<h1>Mis libros</h1>
+<p class="nota">¿Has cambiado de opinión? Pulsa en «Cambiar» para mover el libro a la otra lista.</p>
+
+{% for titulo, lista, icono in [("Me gustan", gustan, "♥"), ("No me gustan", no_gustan, "✕")] %}
+  <h2>{{ icono }} {{ titulo }} <span class="pildora">{{ lista|length }}</span></h2>
+  {% if lista %}
+    <ul class="rejilla">
+      {% for libro in lista %}
+        <li class="mini">
+          {{ portada(libro, 'portada-mini') }}
+          <div>
+            <strong>{{ libro.titulo }}</strong>
+            <small>{{ libro.autor }}</small>
+            <form method="post" action="{{ url_for('main.cambiar_voto', libro_id=libro.id) }}">
+              <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+              <button class="enlace">Cambiar</button>
+            </form>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="vacio">Todavía no hay libros aquí.</p>
+  {% endif %}
+{% endfor %}
+{% endblock %}

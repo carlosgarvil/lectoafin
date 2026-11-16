@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <title>{% block titulo %}Lectoafín{% endblock %} · Lectoafín</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="barra">
+    <a class="logo" href="{{ url_for('main.inicio') }}">📚 Lectoafín</a>
+    <nav>
+      {% if current_user.is_authenticated %}
+        {% if current_user.es_admin %}
+          <a href="{{ url_for('admin.panel') }}">Panel</a>
+          <a href="{{ url_for('admin.libros') }}">Biblioteca</a>
+          <a href="{{ url_for('admin.buscar') }}">Importar</a>
+          <a href="{{ url_for('admin.usuarios') }}">Alumnado</a>
+        {% else %}
+          <a href="{{ url_for('main.descubrir') }}">Descubrir</a>
+          <a href="{{ url_for('main.mis_libros') }}">Mis libros</a>
+          <a href="{{ url_for('main.afinidades') }}">Afinidades</a>
+        {% endif %}
+        <form method="post" action="{{ url_for('auth.logout') }}" class="en-linea">
+          <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+          <button class="enlace">Salir ({{ current_user.alias }})</button>
+        </form>
+      {% else %}
+        <a href="{{ url_for('auth.login') }}">Entrar</a>
+        <a href="{{ url_for('auth.registro') }}">Registrarse</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <main class="contenido">
+    {% with mensajes = get_flashed_messages(with_categories=true) %}
+      {% for tipo, msg in mensajes %}
+        <div class="aviso aviso-{{ tipo }}">{{ msg }}</div>
+      {% endfor %}
+    {% endwith %}
+    {% block contenido %}{% endblock %}
+  </main>
+
+  <footer class="pie">Proyecto educativo · Biblioteca del instituto</footer>
+  {% block scripts %}{% endblock %}
+</body>
+</html>
