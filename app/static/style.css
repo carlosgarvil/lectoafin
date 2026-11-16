@@ -318,6 +318,7 @@ input:focus, textarea:focus, select:focus { outline: none; border-color: var(--r
   position: fixed; pointer-events: none; z-index: 50; font-size: 1.6rem;
   animation: subir 900ms ease-out forwards;
 }
+.corazoncito.grande { font-size: 2.8rem; animation-duration: 1.1s; }
 @keyframes subir {
   from { transform: translate(0, 0) scale(.6); opacity: 1; }
   to   { transform: translate(var(--dx), -140px) scale(1.2); opacity: 0; }
@@ -331,15 +332,62 @@ input:focus, textarea:focus, select:focus { outline: none; border-color: var(--r
 }
 .mini > div { display: flex; flex-direction: column; gap: .25rem; align-items: flex-start; min-width: 0; }
 .mini small { color: var(--suave); }
+
+/* Mis libros: animaciones al mover un libro de lista (las lanza mis_libros.js) */
+.mini { transition: box-shadow .3s; }
+.sale-roto { animation: romper .65s ease-in forwards; pointer-events: none; }
+@keyframes romper {
+  0%   { transform: none; }
+  12%  { transform: translateX(-7px) rotate(-2deg); }
+  24%  { transform: translateX(7px) rotate(2deg); }
+  36%  { transform: translateX(-5px) rotate(-1deg); filter: grayscale(.4); }
+  48%  { transform: translateX(0) rotate(0); filter: grayscale(1); opacity: 1; }
+  100% { transform: translateY(40px) rotate(6deg) scale(.9); filter: grayscale(1); opacity: 0; }
+}
+.sale-flechazo { animation: flechazo .65s cubic-bezier(.3, -.4, .6, 1) forwards; pointer-events: none; }
+@keyframes flechazo {
+  0%   { transform: none; }
+  30%  { transform: translateY(6px) scale(.97); }
+  60%  { transform: translateY(-22px) scale(1.04); box-shadow: 0 0 0 4px var(--rosa-fuerte), var(--sombra); opacity: 1; }
+  100% { transform: translateY(-60px) scale(.9); opacity: 0; }
+}
+.llega { animation: llegar 1.4s ease-out; }
+@keyframes llegar {
+  0%   { transform: scale(.85); opacity: 0; }
+  25%  { transform: scale(1.05); opacity: 1; box-shadow: 0 0 0 5px var(--rosa-fuerte), var(--sombra); }
+  45%  { transform: scale(.98); }
+  60%  { transform: scale(1); box-shadow: 0 0 0 5px var(--rosa-fuerte), var(--sombra); }
+  100% { box-shadow: var(--sombra-suave); }
+}
 .titulo-seccion { display: flex; align-items: center; gap: .6rem; }
 .titulo-seccion .sticker { font-size: 1.7rem; }
 
 .lista-afinidad { list-style: none; padding: 0; display: grid; gap: 1rem; }
-.conexion { position: relative; }
-.conexion:nth-child(4n+1) { background: color-mix(in srgb, var(--rosa) 45%, var(--superficie)); }
-.conexion:nth-child(4n+2) { background: color-mix(in srgb, var(--menta) 45%, var(--superficie)); }
-.conexion:nth-child(4n+3) { background: color-mix(in srgb, var(--lila) 45%, var(--superficie)); }
-.conexion:nth-child(4n+4) { background: color-mix(in srgb, var(--melocoton) 45%, var(--superficie)); }
+.conexion { position: relative; background: color-mix(in srgb, var(--color-cat) 45%, var(--superficie)); }
+
+/* Categorías de matches: cada una con su color */
+.categoria-alta  { --color-cat: var(--rosa); }
+.categoria-media { --color-cat: var(--lila); }
+.categoria-baja  { --color-cat: var(--menta); }
+.categoria { margin-top: 1.6rem; }
+.conexion p { margin: .5rem 0 0; }
+.categoria h2 { margin: 0 0 .1rem; }
+.lema-categoria { margin: 0 0 1rem; color: var(--suave); font-weight: 600; }
+.categoria-alta .conexion { border-color: var(--rosa-fuerte); }
+.categoria-baja .lista-afinidad { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+.categoria-baja .conexion { padding: .9rem 1.1rem; }
+.categoria-baja .porcentaje { font-size: 1.25rem; }
+
+.saltos-categorias { display: flex; gap: .5rem; overflow-x: auto; padding: .2rem 0 .4rem; scrollbar-width: none; }
+.salto {
+  white-space: nowrap; text-decoration: none; color: var(--texto); font-weight: 700; font-size: .92rem;
+  padding: .45rem .9rem; border-radius: 999px; background: var(--color-cat);
+}
+.salto .pildora { background: var(--superficie); }
+.salto-alta { --color-cat: var(--rosa); }
+.salto-media { --color-cat: var(--lila); }
+.salto-baja { --color-cat: var(--menta); }
+html { scroll-behavior: smooth; scroll-padding-top: 6rem; }
 .cabecera-afinidad { display: flex; align-items: baseline; gap: .6rem; flex-wrap: wrap; }
 .cabecera-afinidad strong { font-family: var(--fuente-titulos); font-size: 1.25rem; font-weight: 600; }
 .cabecera-afinidad small { color: var(--suave); }

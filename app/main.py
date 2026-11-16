@@ -6,7 +6,7 @@ Hay dos tipos de rutas:
 
 Así se ve claramente la separación FRONT (navegador) / BACK (servidor).
 """
-from flask import Blueprint, abort, jsonify, redirect, render_template, request, url_for
+from flask import Blueprint, abort, current_app, jsonify, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
 from .extensions import db
@@ -109,7 +109,28 @@ def afinidades():
         abort(404)
     resultados = calcular_afinidades(current_user)
     libros = {l.id: l for l in Libro.query.all()}
-    return render_template("afinidades.html",
-                           conexiones=[r for r in resultados if r["es_conexion"]],
-                           resto=[r for r in resultados if not r["es_conexion"]],
-                           libros=libros)
+
+    # Repartimos a los compañeros en 3 categorías según la afinidad (ya vienen ordenados)
+    cfg = current_app.config
+    categorias = [
+        {"clave": "alta", "icono": "🔥", "titulo": "Conexión total",
+         "lema": "Leéis en la misma onda. ¡Montad un club de lectura!", "personas": []},
+        {"clave": "media", "icono": "✨", "titulo": "Buenas vibes",
+         "lema": "Compartís bastantes gustos: seguro que os recomendáis algo.", "personas": []},
+        {"clave": "baja", "icono": "🌱", "titulo": "Por descubrir",
+         "lema": "Tenéis algo en común… ¿y si os prestáis un libro?", "personas": []},
+    ]
+    sin_comunes = []
+    for r in resultados:
+        suficientes = len(r["comunes"]) >= cfg["MIN_LIBROS_COMUNES"]
+        if suficientes and r["afinidad"] >= cfg["AFINIDAD_ALTA"]:
+            categorias[0]["personas"].append(r)
+        elif suficientes and r["afinidad"] >= cfg["AFINIDAD_MEDIA"]:
+            categorias[1]["personas"].append(r)
+        elif r["comunes"]:
+            categorias[2]["personas"].append(r)
+        else:
+            sin_comunes.append(r)
+
+    return render_template("afinidades.html", categorias=categorias,
+                           sin_comunes=sin_comunes, libros=libros)

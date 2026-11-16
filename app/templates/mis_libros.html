@@ -5,19 +5,21 @@
 <h1>Mis libros</h1>
 <p class="nota">¿Has cambiado de opinión? Sin dramas: mueve el libro a la otra lista cuando quieras.</p>
 
-{% for titulo, lista, icono, vacio, boton in [
-     ("Mis crushes", gustan, "💖", "Aún no tienes ningún crush lector. ¡Ve a Descubrir!", "💔 Ya no es mi crush"),
-     ("Paso de ellos", no_gustan, "🙅", "Todavía no has pasado de ningún libro.", "💘 Darle otra oportunidad")] %}
+{# efecto: animación de mis_libros.js al pulsar el botón #}
+{% for titulo, lista, icono, vacio, boton, efecto in [
+     ("Mis crushes", gustan, "💖", "Aún no tienes ningún crush lector. ¡Ve a Descubrir!", "💔 Ya no es mi crush", "romper"),
+     ("Paso de ellos", no_gustan, "🙅", "Todavía no has pasado de ningún libro.", "💘 Darle otra oportunidad", "flechazo")] %}
   <h2 class="titulo-seccion"><span class="sticker" aria-hidden="true">{{ icono }}</span> {{ titulo }} <span class="pildora">{{ lista|length }}</span></h2>
   {% if lista %}
     <ul class="rejilla">
       {% for libro in lista %}
-        <li class="mini">
+        <li class="mini" data-libro="{{ libro.id }}">
           {{ portada(libro, 'portada-mini') }}
           <div>
             <strong>{{ libro.titulo }}</strong>
             <small>{{ libro.autor }}</small>
-            <form method="post" action="{{ url_for('main.cambiar_voto', libro_id=libro.id) }}">
+            <form method="post" action="{{ url_for('main.cambiar_voto', libro_id=libro.id) }}"
+                  class="form-cambiar" data-efecto="{{ efecto }}">
               <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
               <button class="boton pequeño secundario" aria-label="{{ boton[2:] }}: {{ libro.titulo }}">{{ boton }}</button>
             </form>
@@ -29,4 +31,7 @@
     <p class="estado-vacio">{{ vacio }}</p>
   {% endif %}
 {% endfor %}
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='mis_libros.js') }}"></script>
 {% endblock %}

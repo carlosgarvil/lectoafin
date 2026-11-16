@@ -44,6 +44,10 @@ def create_app():
         # Parámetros del algoritmo de afinidad (ver app/matching.py)
         UMBRAL_AFINIDAD=0.30,   # afinidad mínima (0..1) para considerar que hay "conexión"
         MIN_LIBROS_COMUNES=2,   # nº mínimo de libros que gustan a ambos
+        # Categorías de la página "Matches" del alumnado (ver main.afinidades)
+        AFINIDAD_ALTA=0.40,     # 🔥 Conexión total   (y al menos MIN_LIBROS_COMUNES)
+        AFINIDAD_MEDIA=0.20,    # ✨ Buenas vibes     (y al menos MIN_LIBROS_COMUNES)
+                                # 🌱 Por descubrir   -> al menos 1 libro en común
         # Si se define, el alumnado necesita este código para registrarse
         CODIGO_REGISTRO=os.environ.get("CODIGO_REGISTRO", ""),
         # False: el alias SOLO puede salir del generador (listas_alias/). True: alias libre.

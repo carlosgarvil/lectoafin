@@ -3,41 +3,58 @@
 {% block contenido %}
 <h1>Tus matches lectores ✨</h1>
 <p class="nota">
-  Un <strong>match lector</strong> es alguien que lee como tú: el porcentaje de libros que os
-  gustan a los dos sobre el total de libros que le gustan a alguno de los dos
-  (<em>índice de Jaccard</em>). Hay match a partir del
-  {{ (config.UMBRAL_AFINIDAD * 100)|round|int }} % y con al menos {{ config.MIN_LIBROS_COMUNES }} libros en común.
+  Tu afinidad con alguien es el porcentaje de libros que os gustan a los dos sobre el total de
+  libros que le gustan a alguno de los dos (<em>índice de Jaccard</em>). Cuantos más crushes
+  lectores compartáis, más arriba saldréis.
 </p>
 
-<h2 class="titulo-seccion"><span class="sticker" aria-hidden="true">🤝</span> Matches <span class="pildora">{{ conexiones|length }}</span></h2>
-{% if conexiones %}
-  <ul class="lista-afinidad" id="matches" data-total="{{ conexiones|length }}">
-    {% for r in conexiones %}
-      <li class="tarjeta conexion">
-        <div class="cabecera-afinidad">
-          <strong>{{ r.usuario.alias }}</strong> <small>{{ r.usuario.grupo }}</small>
-          <span class="porcentaje">{{ (r.afinidad * 100)|round|int }} %</span>
-        </div>
-        <div class="barra-afinidad"><span style="width: {{ (r.afinidad * 100)|round|int }}%"></span></div>
-        <p>Os gustan: {% for id in r.comunes %}<em>{{ libros[id].titulo }}</em>{{ ", " if not loop.last }}{% endfor %}</p>
-      </li>
-    {% endfor %}
-  </ul>
-{% else %}
-  <div class="estado-vacio">
-    <div class="sticker" aria-hidden="true">🔍</div>
-    <p>Aún no tienes matches. ¡Valora más libros para encontrarlos!</p>
-    <a class="boton" href="{{ url_for('main.descubrir') }}">Ir a Descubrir</a>
-  </div>
-{% endif %}
+{# Saltos rápidos a cada categoría #}
+<nav class="saltos-categorias" aria-label="Categorías">
+  {% for cat in categorias %}
+    <a href="#cat-{{ cat.clave }}" class="salto salto-{{ cat.clave }}">{{ cat.icono }} {{ cat.titulo }}
+      <span class="pildora">{{ cat.personas|length }}</span></a>
+  {% endfor %}
+</nav>
 
-{% if resto %}
+<div id="matches" data-total="{{ categorias[0].personas|length + categorias[1].personas|length }}">
+{% for cat in categorias %}
+  <section class="categoria categoria-{{ cat.clave }}" id="cat-{{ cat.clave }}">
+    <h2 class="titulo-seccion">
+      <span class="sticker" aria-hidden="true">{{ cat.icono }}</span> {{ cat.titulo }}
+      <span class="pildora">{{ cat.personas|length }}</span>
+    </h2>
+    <p class="lema-categoria">{{ cat.lema }}</p>
+
+    {% if cat.personas %}
+      <ul class="lista-afinidad">
+        {% for r in cat.personas %}
+          <li class="tarjeta conexion">
+            <div class="cabecera-afinidad">
+              <strong>{{ r.usuario.alias }}</strong> <small>{{ r.usuario.grupo }}</small>
+              <span class="porcentaje">{{ (r.afinidad * 100)|round|int }} %</span>
+            </div>
+            <div class="barra-afinidad"><span style="width: {{ (r.afinidad * 100)|round|int }}%"></span></div>
+            {% set verbo = "flipa" if cat.clave == "alta" else "gusta" %}
+            <p>Os {{ verbo }}{{ "n" if r.comunes|length > 1 }}:
+              {% for id in r.comunes %}<em>{{ libros[id].titulo }}</em>{{ ", " if not loop.last }}{% endfor %}</p>
+          </li>
+        {% endfor %}
+      </ul>
+    {% elif cat.clave == "alta" %}
+      <p class="estado-vacio">Todavía nadie lee <em>exactamente</em> como tú. ¡Dale más crushes en
+        <a href="{{ url_for('main.descubrir') }}">Descubrir</a> y aparecerán!</p>
+    {% else %}
+      <p class="estado-vacio">Nadie por aquí… de momento.</p>
+    {% endif %}
+  </section>
+{% endfor %}
+</div>
+
+{% if sin_comunes %}
   <details>
-    <summary>Ver afinidad con el resto ({{ resto|length }})</summary>
+    <summary>Sin libros en común todavía ({{ sin_comunes|length }})</summary>
     <ul class="lista-simple">
-      {% for r in resto %}
-        <li>{{ r.usuario.alias }} · {{ (r.afinidad * 100)|round|int }} % · {{ r.comunes|length }} en común</li>
-      {% endfor %}
+      {% for r in sin_comunes %}<li>{{ r.usuario.alias }} <small class="nota">{{ r.usuario.grupo }}</small></li>{% endfor %}
     </ul>
   </details>
 {% endif %}
