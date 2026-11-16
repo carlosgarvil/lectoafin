@@ -53,6 +53,9 @@ def create_app():
     from . import alias
     alias.iniciar(app)      # lee las listas de listas_alias/ una sola vez, al arrancar
 
+    from . import cursos
+    cursos.iniciar(app)     # lee cursos.txt (desplegable "Curso" del registro)
+
     from .seguridad import comprobar_csrf, csrf_token
     app.before_request(comprobar_csrf)
     app.jinja_env.globals["csrf_token"] = csrf_token

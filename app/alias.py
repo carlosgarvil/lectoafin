@@ -44,15 +44,15 @@ APELLIDO_PROPIO = {
 
 # ---------------------------------------------------------------- Lectura de los ficheros
 
-def _lineas_utiles(ruta):
+def lineas_utiles(ruta):
     """Devuelve las líneas con contenido (sin vacías ni comentarios), con su número de línea."""
     try:
         texto = ruta.read_text(encoding="utf-8-sig")      # -sig: tolera el BOM del Bloc de notas
     except FileNotFoundError:
-        log.warning("Alias: no existe el fichero %s; se usará una lista vacía.", ruta)
+        log.warning("Listas: no existe el fichero %s; se usará una lista vacía.", ruta)
         return []
     except (OSError, UnicodeDecodeError) as exc:
-        log.warning("Alias: no se pudo leer %s (%s); se usará una lista vacía.", ruta, exc)
+        log.warning("Listas: no se pudo leer %s (%s); se usará una lista vacía.", ruta, exc)
         return []
     return [(n, l.strip()) for n, l in enumerate(texto.splitlines(), 1)
             if l.strip() and not l.strip().startswith("#")]
@@ -65,7 +65,7 @@ def _camel(palabra):
 
 def _leer_palabras(ruta):
     palabras = []
-    for n, linea in _lineas_utiles(ruta):
+    for n, linea in lineas_utiles(ruta):
         if PALABRA.match(linea):
             palabras.append(_camel(linea))
         else:
@@ -76,7 +76,7 @@ def _leer_palabras(ruta):
 def _leer_adjetivos(ruta):
     """Devuelve dos listas: formas masculinas y femeninas (las invariables van en ambas)."""
     masculinos, femeninos = [], []
-    for n, linea in _lineas_utiles(ruta):
+    for n, linea in lineas_utiles(ruta):
         partes = [p.strip() for p in linea.split("/")]
         if len(partes) == 1 and PALABRA.match(partes[0]):
             masculinos.append(_camel(partes[0]))

@@ -3,11 +3,11 @@
 {% block titulo %}Mis libros{% endblock %}
 {% block contenido %}
 <h1>Mis libros</h1>
-<p class="nota">¿Has cambiado de opinión? Pulsa en «Cambiar» para mover el libro a la otra lista.</p>
+<p class="nota">¿Has cambiado de opinión? Sin dramas: mueve el libro a la otra lista cuando quieras.</p>
 
-{% for titulo, lista, icono, vacio in [
-     ("Mis crushes", gustan, "💖", "Aún no tienes ningún crush lector. ¡Ve a Descubrir!"),
-     ("Paso de ellos", no_gustan, "🙅", "Todavía no has pasado de ningún libro.")] %}
+{% for titulo, lista, icono, vacio, boton in [
+     ("Mis crushes", gustan, "💖", "Aún no tienes ningún crush lector. ¡Ve a Descubrir!", "💔 Ya no es mi crush"),
+     ("Paso de ellos", no_gustan, "🙅", "Todavía no has pasado de ningún libro.", "💘 Darle otra oportunidad")] %}
   <h2 class="titulo-seccion"><span class="sticker" aria-hidden="true">{{ icono }}</span> {{ titulo }} <span class="pildora">{{ lista|length }}</span></h2>
   {% if lista %}
     <ul class="rejilla">
@@ -19,7 +19,7 @@
             <small>{{ libro.autor }}</small>
             <form method="post" action="{{ url_for('main.cambiar_voto', libro_id=libro.id) }}">
               <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
-              <button class="enlace">Cambiar</button>
+              <button class="boton pequeño secundario" aria-label="{{ boton[2:] }}: {{ libro.titulo }}">{{ boton }}</button>
             </form>
           </div>
         </li>

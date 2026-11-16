@@ -43,12 +43,14 @@ parejas de debate, tertulias dialógicas…
 lectoafin/
 ├── run.py                 ← punto de entrada
 ├── requirements.txt       ← dependencias
+├── cursos.txt             ← cursos del desplegable de registro (editable)
 ├── listas_alias/          ← palabras para generar alias (editables)
 └── app/
     ├── __init__.py        ← crea la app y configura (umbral de afinidad, etc.)
     ├── models.py          ← tablas: Usuario, Libro, Voto
     ├── auth.py            ← registro / login / logout
     ├── alias.py           ← generador de alias a partir de listas_alias/
+    ├── cursos.py          ← lee cursos.txt
     ├── main.py            ← páginas y API del alumnado
     ├── admin.py           ← panel del profesorado
     ├── matching.py        ← ⭐ algoritmo de afinidad (índice de Jaccard)
@@ -165,6 +167,18 @@ la ignora y deja un aviso en el registro (*log*). Los nombres de personaje se co
 forma femenina o masculina del adjetivo según el fichero en que estén. Para evitar el nombre
 real de un personaje (`HarryPotter`), en `app/alias.py` hay una tabla `APELLIDO_PROPIO`: si
 añades un personaje cuyo apellido también está en la lista, añade ahí la pareja.
+
+### Cambiar la lista de cursos
+
+El desplegable **Curso** del registro sale del fichero **`cursos.txt`** (en la raíz del proyecto).
+Ábrelo con el Bloc de notas y escribe **un curso por línea**, en el orden en que quieras que
+aparezcan (por ejemplo `1º ESO A`). Máximo 20 caracteres por curso; las líneas con `#` son
+comentarios. Igual que con los alias, **reinicia la app** (o vuelve a desplegarla) para ver los
+cambios. Si el fichero no existe o está vacío, el registro muestra un campo de texto libre.
+
+El servidor solo acepta cursos que estén en la lista, aunque alguien manipule el formulario.
+
+### Alias libres
 
 Por defecto **solo se aceptan alias generados**, aunque alguien manipule el formulario. Para
 permitir alias libres, define la variable de entorno `ALIAS_LIBRE=1`. Esto no afecta a la

@@ -3,6 +3,7 @@ from flask import Blueprint, current_app, flash, jsonify, redirect, render_templ
 from flask_login import login_required, login_user, logout_user
 
 from . import alias as generador
+from .cursos import cursos_actuales
 from .extensions import db
 from .models import Usuario
 
@@ -45,6 +46,9 @@ def registro():
             alias = ""
         if len(password) < 6:
             errores.append("La contraseña debe tener al menos 6 caracteres.")
+        if cursos_actuales() and grupo not in cursos_actuales():
+            errores.append("Elige tu curso en la lista.")
+            grupo = ""
         if password != password2:
             errores.append("Las contraseñas no coinciden.")
         if Usuario.query.filter_by(alias=alias).first():

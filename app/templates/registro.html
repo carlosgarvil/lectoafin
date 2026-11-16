@@ -23,9 +23,20 @@
       <input name="alias" value="{{ alias or '' }}" minlength="3" maxlength="40" required autocomplete="username">
     </label>
   {% endif %}
-  <label>Grupo
-    <input name="grupo" value="{{ grupo or '' }}" placeholder="p. ej. 1º BACH A" maxlength="20">
-  </label>
+  {% if lista_cursos %}
+    <label>Curso
+      <select name="grupo" required>
+        <option value="" disabled {{ 'selected' if not grupo }}>Elige tu curso…</option>
+        {% for curso in lista_cursos %}
+          <option {{ 'selected' if curso == grupo }}>{{ curso }}</option>
+        {% endfor %}
+      </select>
+    </label>
+  {% else %}
+    <label>Grupo
+      <input name="grupo" value="{{ grupo or '' }}" placeholder="p. ej. 1º BACH A" maxlength="20">
+    </label>
+  {% endif %}
   <label>Contraseña <input name="password" type="password" minlength="6" required autocomplete="new-password"></label>
   <label>Repite la contraseña <input name="password2" type="password" minlength="6" required autocomplete="new-password"></label>
   <button class="boton">Registrarme</button>

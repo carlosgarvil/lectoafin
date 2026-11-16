@@ -1,0 +1,22 @@
+# CURSOS Y GRUPOS
+# Aparecen en el desplegable "Curso" del formulario de registro, en este mismo orden.
+# Un curso por línea. Las líneas que empiezan por # se ignoran.
+# Máximo 20 caracteres por línea.
+# Después de cambiar este fichero hay que reiniciar la app (o volver a desplegarla).
+
+1º ESO A
+1º ESO B
+1º ESO C
+2º ESO A
+2º ESO B
+2º ESO C
+3º ESO A
+3º ESO B
+3º ESO C
+4º ESO A
+4º ESO B
+4º ESO C
+1º BACH A
+1º BACH B
+2º BACH A
+2º BACH B
