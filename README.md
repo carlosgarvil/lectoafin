@@ -1,4 +1,6 @@
-# 📚 Lectoafín
+# Bookcrush · encuentra tu flechazo lector
+
+<img src="app/static/logo.svg" alt="Logo de Bookcrush" width="120">
 
 Aplicación web educativa para la biblioteca del instituto. El alumnado valora los libros con
 **me gusta / no me gusta** y la aplicación calcula su **afinidad lectora** con el resto de
@@ -24,7 +26,7 @@ parejas de debate, tertulias dialógicas…
 └──────────────────────┬────────────────────────┘
                        │  SQLAlchemy (ORM)
 ┌──────────────────────▼────────────────────────┐
-│ BASE DE DATOS: SQLite (instance/lectoafin.db) │
+│ BASE DE DATOS: SQLite (instance/bookcrush.db) │
 └───────────────────────────────────────────────┘
 ```
 
@@ -41,10 +43,12 @@ parejas de debate, tertulias dialógicas…
 lectoafin/
 ├── run.py                 ← punto de entrada
 ├── requirements.txt       ← dependencias
+├── listas_alias/          ← palabras para generar alias (editables)
 └── app/
     ├── __init__.py        ← crea la app y configura (umbral de afinidad, etc.)
     ├── models.py          ← tablas: Usuario, Libro, Voto
     ├── auth.py            ← registro / login / logout
+    ├── alias.py           ← generador de alias a partir de listas_alias/
     ├── main.py            ← páginas y API del alumnado
     ├── admin.py           ← panel del profesorado
     ├── matching.py        ← ⭐ algoritmo de afinidad (índice de Jaccard)
@@ -52,7 +56,7 @@ lectoafin/
     ├── seguridad.py       ← protección CSRF y control de acceso
     ├── cli.py             ← comandos: crear-admin, datos-ejemplo
     ├── templates/         ← HTML (Jinja2)
-    └── static/            ← style.css, descubrir.js
+    └── static/            ← style.css, descubrir.js, confeti.js, logo e iconos
 ```
 
 ### Modelo de datos
@@ -87,7 +91,22 @@ flask --app run run --debug          # abre http://127.0.0.1:5000
 ```
 
 * Los alumnos ficticios son `lector01` … `lector12`, con la contraseña `prueba123`.
-* Para empezar de cero, borra `instance/lectoafin.db`.
+* **Catálogo real de la biblioteca (Séneca):** en Séneca, exporta el catálogo de ejemplares a Excel
+  (`RegEjemplares.xls`) y cárgalo:
+  ```bash
+  flask --app run importar-seneca RegEjemplares.xls --ocultos --open-library
+  # o, para pruebas, con alumnado ficticio:  flask --app run datos-ejemplo --catalogo RegEjemplares.xls
+  ```
+  Séneca da una fila por **ejemplar**; el script agrupa por ISBN (o por título + autor), limpia
+  los nombres de autor y guarda los descriptores como «Temas». `--ocultos` los deja ocultos para
+  activar desde el panel solo los que interesen; `--open-library` busca portada y año por ISBN.
+  Ejecutarlo dos veces no duplica libros. Código en `app/catalogo_seneca.py`.
+* **Sinopsis automáticas:** al importar un libro desde Open Library se busca su sinopsis
+  (código en `app/sinopsis.py`). Primero en **Google Books en español**, si existe la variable
+  `GOOGLE_BOOKS_API_KEY` (clave gratuita de Google Cloud → API «Books»); si no, en **Open Library**,
+  que no necesita clave pero suele darla en inglés. En «Editar libro» hay un botón para buscarla
+  de nuevo, y para los libros que ya tengas: `flask --app run completar-sinopsis`.
+* Para empezar de cero, borra `instance/bookcrush.db`.
 * Para que puedan entrar otros equipos del aula, ejecuta `flask --app run run --host 0.0.0.0`
   y accede con la IP del ordenador del profesor.
 * **Código de clase (opcional):** si defines la variable de entorno `CODIGO_REGISTRO`
@@ -109,9 +128,47 @@ PostgreSQL. En Render el disco se borra en cada reinicio, así que allí no se u
 | `SECRET_KEY` | Firma las cookies de sesión (la genera Render) |
 | `ADMIN_ALIAS` / `ADMIN_PASSWORD` | Crea o actualiza la cuenta admin en cada arranque |
 | `CODIGO_REGISTRO` | Código de clase opcional para registrarse |
+| `GOOGLE_BOOKS_API_KEY` | Opcional: sinopsis en español desde Google Books |
+| `ALIAS_LIBRE` | Opcional: `1` permite escribir el alias a mano en el registro |
 
 Limitaciones del plan gratuito: la web se «duerme» tras 15 minutos sin visitas (la primera
 carga tarda en torno a un minuto) y la base de datos gratuita caduca a los 30 días.
+
+### Personalizar los alias
+
+Al registrarse, cada alumno o alumna recibe un **alias generado** que mezcla un personaje
+literario con un adjetivo o con el apellido de otro personaje: `KatnissExploradora07`,
+`FrodoHolmes42`, `SherlockDormilón15`… Si no le gusta, pulsa 🎲 **Generar otro**. Así nadie
+usa su nombre real y no aparecen alias ofensivos.
+
+Las palabras están en la carpeta **`listas_alias/`** y se pueden cambiar sin saber programar:
+
+| Fichero | Qué contiene | Ejemplo de línea |
+|---|---|---|
+| `personajes_femeninos.txt` | Nombres de personajes femeninos | `Hermione` |
+| `personajes_masculinos.txt` | Nombres de personajes masculinos | `Sherlock` |
+| `apellidos.txt` | Apellidos de personajes, **sin espacios** | `VanHelsing` |
+| `adjetivos.txt` | `masculino / femenino`, o una sola palabra si no cambia | `explorador / exploradora` · `veloz` |
+
+**Cómo editarlos:**
+
+1. Abre el fichero con el **Bloc de notas** (u otro editor de texto sencillo; no uses Word).
+2. Escribe **una palabra por línea**. Puedes añadir, borrar o cambiar las que quieras.
+3. Las líneas que empiezan por `#` son comentarios y las vacías se ignoran: úsalas para organizarte.
+4. Usa solo letras (las tildes y la ñ están permitidas). No pongas números ni símbolos.
+5. Al guardar, si el editor pregunta por la codificación, elige **UTF-8**.
+6. **Reinicia la app** para que se apliquen los cambios: en local, para el servidor (Ctrl+C) y
+   vuelve a arrancarlo; en Render, sube los cambios a GitHub y espera a que se vuelva a desplegar.
+
+Si una línea está mal escrita (por ejemplo `listo / lista / listísimo`), la app no se rompe:
+la ignora y deja un aviso en el registro (*log*). Los nombres de personaje se combinan con la
+forma femenina o masculina del adjetivo según el fichero en que estén. Para evitar el nombre
+real de un personaje (`HarryPotter`), en `app/alias.py` hay una tabla `APELLIDO_PROPIO`: si
+añades un personaje cuyo apellido también está en la lista, añade ahí la pareja.
+
+Por defecto **solo se aceptan alias generados**, aunque alguien manipule el formulario. Para
+permitir alias libres, define la variable de entorno `ALIAS_LIBRE=1`. Esto no afecta a la
+cuenta del profesorado (`ADMIN_ALIAS`), que no se registra por el formulario.
 
 ---
 
@@ -122,7 +179,7 @@ carga tarda en torno a un minuto) y la base de datos gratuita caduca a los 30 d�
 - **Descubrir**: tarjetas de libros que se arrastran a la derecha (me gusta) o a la izquierda
   (no me gusta). También funcionan los botones y las flechas del teclado.
 - **Mis libros**: lista de valoraciones, con opción de cambiar de opinión.
-- **Afinidades**: porcentaje de afinidad con cada compañero/a y libros en común.
+- **Matches lectores** (antes «Afinidades»): porcentaje de afinidad con cada compañero/a y libros en común.
 
 **Profesorado (admin)**
 - Decide qué libros forman la biblioteca: los añade a mano o los **importa desde Open Library**.
@@ -169,7 +226,7 @@ se cambian en `app/__init__.py` (`UMBRAL_AFINIDAD`, `MIN_LIBROS_COMUNES`).
 2. **Mejora el algoritmo:** que también cuenten los «no me gusta» en común y que los desacuerdos
    resten afinidad. Compara los resultados con los de Jaccard.
 3. **Nuevo campo:** añade el *género* a `Libro` y un filtro por género en «Descubrir».
-4. **Consultas SQL:** abre `instance/lectoafin.db` con *DB Browser for SQLite* y escribe consultas:
+4. **Consultas SQL:** abre `instance/bookcrush.db` con *DB Browser for SQLite* y escribe consultas:
    el libro más polémico (los votos más repartidos), el alumno que más ha votado…
 5. **Seguridad:** explica por qué `textContent` evita XSS y qué pasaría con `innerHTML`.
    Busca qué ataque evita el token CSRF.

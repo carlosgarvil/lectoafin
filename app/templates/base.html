@@ -4,31 +4,52 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="csrf-token" content="{{ csrf_token() }}">
-  <title>{% block titulo %}Lectoafín{% endblock %} · Lectoafín</title>
+  <meta name="description" content="Bookcrush · encuentra tu flechazo lector. Valora libros y descubre a tus compañeros de lectura.">
+  <meta name="theme-color" content="#ffd3e4" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1d1624" media="(prefers-color-scheme: dark)">
+  <title>{% block titulo %}Inicio{% endblock %} · Bookcrush</title>
+
+  {# Iconos: SVG para navegadores modernos, PNG como respaldo y para iOS #}
+  <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+  <link rel="icon" href="{{ url_for('static', filename='favicon-32.png') }}" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+  <link rel="manifest" href="{{ url_for('static', filename='manifest.webmanifest') }}">
+
+  {# Tipografías: Fredoka (títulos, redondeada) y Nunito (texto, muy legible) #}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
+{% set es_admin = current_user.is_authenticated and current_user.es_admin %}
+<body class="{{ 'modo-admin' if es_admin }}">
   <header class="barra">
-    <a class="logo" href="{{ url_for('main.inicio') }}">📚 Lectoafín</a>
-    <nav>
+    <a class="logo" href="{{ url_for('main.inicio') }}">
+      <img src="{{ url_for('static', filename='logo.svg') }}" alt="" width="40" height="40">Bookcrush
+    </a>
+    <nav aria-label="Menú principal">
+      {% macro enlace(endpoint, texto) %}
+        <a href="{{ url_for(endpoint) }}" class="{{ 'activa' if request.endpoint == endpoint }}"
+           {% if request.endpoint == endpoint %}aria-current="page"{% endif %}>{{ texto }}</a>
+      {% endmacro %}
       {% if current_user.is_authenticated %}
-        {% if current_user.es_admin %}
-          <a href="{{ url_for('admin.panel') }}">Panel</a>
-          <a href="{{ url_for('admin.libros') }}">Biblioteca</a>
-          <a href="{{ url_for('admin.buscar') }}">Importar</a>
-          <a href="{{ url_for('admin.usuarios') }}">Alumnado</a>
+        {% if es_admin %}
+          {{ enlace('admin.panel', 'Panel') }}
+          {{ enlace('admin.libros', 'Biblioteca') }}
+          {{ enlace('admin.buscar', 'Importar') }}
+          {{ enlace('admin.usuarios', 'Alumnado') }}
         {% else %}
-          <a href="{{ url_for('main.descubrir') }}">Descubrir</a>
-          <a href="{{ url_for('main.mis_libros') }}">Mis libros</a>
-          <a href="{{ url_for('main.afinidades') }}">Afinidades</a>
+          {{ enlace('main.descubrir', '📚 Descubrir') }}
+          {{ enlace('main.mis_libros', '💖 Mis libros') }}
+          {{ enlace('main.afinidades', '✨ Matches') }}
         {% endif %}
         <form method="post" action="{{ url_for('auth.logout') }}" class="en-linea">
           <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
           <button class="enlace">Salir ({{ current_user.alias }})</button>
         </form>
       {% else %}
-        <a href="{{ url_for('auth.login') }}">Entrar</a>
-        <a href="{{ url_for('auth.registro') }}">Registrarse</a>
+        {{ enlace('auth.login', 'Entrar') }}
+        {{ enlace('auth.registro', 'Registrarse') }}
       {% endif %}
     </nav>
   </header>
@@ -36,13 +57,13 @@
   <main class="contenido">
     {% with mensajes = get_flashed_messages(with_categories=true) %}
       {% for tipo, msg in mensajes %}
-        <div class="aviso aviso-{{ tipo }}">{{ msg }}</div>
+        <div class="aviso aviso-{{ tipo }}" role="status">{{ msg }}</div>
       {% endfor %}
     {% endwith %}
     {% block contenido %}{% endblock %}
   </main>
 
-  <footer class="pie">Proyecto educativo · Biblioteca del instituto</footer>
+  <footer class="pie">Bookcrush · Proyecto educativo · Biblioteca del instituto</footer>
   {% block scripts %}{% endblock %}
 </body>
 </html>

@@ -2,14 +2,27 @@
 {% block titulo %}Registro{% endblock %}
 {% block contenido %}
 <form method="post" class="tarjeta formulario">
-  <h1>Crear cuenta</h1>
+  <span class="sticker esquina" style="--giro: 10deg" aria-hidden="true">💌</span>
+  <h1>Crea tu cuenta</h1>
   <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
   {% if config.CODIGO_REGISTRO %}
     <label>Código de clase <input name="codigo" required></label>
   {% endif %}
-  <label>Alias <small>(no uses tu nombre completo)</small>
-    <input name="alias" value="{{ alias or '' }}" minlength="3" maxlength="40" required autocomplete="username">
-  </label>
+  {% if generado %}
+    <label for="alias">Tu alias <small>(así te verán los demás: tu nombre real queda en secreto)</small></label>
+    <div class="alias-generado">
+      <input id="alias" name="alias" value="{{ alias or '' }}" readonly required autocomplete="username"
+             aria-describedby="alias-ayuda">
+      <button type="button" class="boton secundario" id="otro-alias">
+        <span class="dado" aria-hidden="true">🎲</span> Generar otro
+      </button>
+    </div>
+    <small id="alias-ayuda" class="nota">Apúntalo bien: lo necesitarás para entrar.</small>
+  {% else %}
+    <label>Alias <small>(no uses tu nombre completo)</small>
+      <input name="alias" value="{{ alias or '' }}" minlength="3" maxlength="40" required autocomplete="username">
+    </label>
+  {% endif %}
   <label>Grupo
     <input name="grupo" value="{{ grupo or '' }}" placeholder="p. ej. 1º BACH A" maxlength="20">
   </label>
@@ -17,4 +30,7 @@
   <label>Repite la contraseña <input name="password2" type="password" minlength="6" required autocomplete="new-password"></label>
   <button class="boton">Registrarme</button>
 </form>
+{% endblock %}
+{% block scripts %}
+  {% if generado %}<script src="{{ url_for('static', filename='alias.js') }}"></script>{% endif %}
 {% endblock %}

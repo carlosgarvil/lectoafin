@@ -7,7 +7,7 @@ muestran al alumnado.
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import login_required
 
-from . import openlibrary
+from . import openlibrary, sinopsis
 from .extensions import db
 from .matching import todas_las_conexiones
 from .models import Libro, Usuario, Voto
@@ -109,15 +109,18 @@ def importar():
     ol_id = request.form.get("openlibrary_id", "").strip()
     if ol_id and not Libro.query.filter_by(openlibrary_id=ol_id).first():
         anio = request.form.get("anio", "")
-        db.session.add(Libro(
+        libro = Libro(
             openlibrary_id=ol_id,
             titulo=request.form.get("titulo", "Sin título"),
             autor=request.form.get("autor", ""),
             anio=int(anio) if anio.isdigit() else None,
             portada_url=request.form.get("portada_url", ""),
-        ))
+        )
+        fuente = sinopsis.completar(libro)      # consulta Google Books / Open Library
+        db.session.add(libro)
         db.session.commit()
-        flash(f"Importado: «{request.form.get('titulo')}». Puedes editar la sinopsis más tarde.", "ok")
+        detalle = f"con sinopsis de {fuente}" if fuente else "sin sinopsis (puedes escribirla en «Editar»)"
+        flash(f"Importado: «{libro.titulo}», {detalle}.", "ok")
     return redirect(url_for("admin.buscar", q=request.form.get("q", "")))
 
 
@@ -137,6 +140,23 @@ def editar(libro_id):
         flash("Cambios guardados.", "ok")
         return redirect(url_for("admin.libros"))
     return render_template("admin/editar.html", libro=libro)
+
+
+@bp.post("/libros/<int:libro_id>/sinopsis")
+@login_required
+@solo_admin
+def buscar_sinopsis(libro_id):
+    """Busca la sinopsis en las APIs externas y la guarda (sustituye la que hubiera)."""
+    libro = db.get_or_404(Libro, libro_id)
+    temas = [l for l in (libro.sinopsis or "").split("\n") if l.startswith("Temas:")]
+    libro.sinopsis = temas[0] if temas else ""          # conservamos solo los «Temas» de Séneca
+    fuente = sinopsis.completar(libro)
+    db.session.commit()
+    if fuente:
+        flash(f"Sinopsis encontrada en {fuente}. Revísala: puede estar en inglés.", "ok")
+    else:
+        flash("No he encontrado sinopsis para este libro. Puedes escribirla a mano.", "error")
+    return redirect(url_for("admin.editar", libro_id=libro.id))
 
 
 @bp.route("/usuarios")

@@ -1,0 +1,45 @@
+# APELLIDOS DE PERSONAJES
+# Un apellido por línea. Las líneas que empiezan por # se ignoran.
+# Se combinan con un nombre de otro personaje: HermioneHolmes, FrodoPanza...
+# Escríbelos sin espacios (VanHelsing, no Van Helsing).
+
+Potter
+Granger
+Holmes
+Panza
+Everdeen
+Bolsón
+Weasley
+Lovegood
+Jackson
+Chase
+Bennet
+Eyre
+March
+Calzaslargas
+Darling
+Crusoe
+Sawyer
+Finn
+Watson
+Poirot
+Marple
+Quijano
+Gafotas
+Frankenstein
+VanHelsing
+Gale
+Wonka
+Bucket
+Pevensie
+Pan
+Hood
+Nemo
+Fogg
+Belacqua
+Longbottom
+Wormwood
+Gulliver
+Twist
+Copperfield
+Tormes

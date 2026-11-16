@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Favicon: versión simplificada para tamaños pequeños (sin líneas finas) -->
+  <rect width="64" height="64" rx="16" fill="#e3d6ff"/>
+  <path d="M32 55 C14 44 6 34 6 22 C6 13 13 7 21 7 C26 7 30 10 32 15 C34 10 38 7 43 7 C51 7 58 13 58 22 C58 34 50 44 32 55 Z"
+        fill="#ff8fb8" stroke="#fff" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M32 26 Q25 21 17 23 L17 39 Q25 37 32 42 Z M32 26 Q39 21 47 23 L47 39 Q39 37 32 42 Z"
+        fill="#fff" stroke="#3a2540" stroke-width="2.6" stroke-linejoin="round"/>
+</svg>

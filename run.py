@@ -1,4 +1,4 @@
-"""Punto de entrada de la aplicación.
+"""Bookcrush · punto de entrada de la aplicación.
 
 Ejecutar en modo desarrollo:
     flask --app run run --debug

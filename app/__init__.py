@@ -1,4 +1,4 @@
-"""Fábrica de la aplicación Flask (patrón "application factory").
+"""Bookcrush · fábrica de la aplicación Flask (patrón "application factory").
 
 Aquí se juntan las piezas: configuración, base de datos, login y los
 "blueprints" (módulos de rutas): auth, main (alumnado) y admin.
@@ -6,18 +6,22 @@ Aquí se juntan las piezas: configuración, base de datos, login y los
 La configuración sensible se lee de VARIABLES DE ENTORNO, así el mismo
 código funciona en local (SQLite) y en un servidor como Render (PostgreSQL).
 """
+import mimetypes
 import os
 
 from flask import Flask
 
 from .extensions import db, login_manager
 
+# Tipo MIME correcto para el manifest de la web instalable (Python no lo trae de serie)
+mimetypes.add_type("application/manifest+json", ".webmanifest")
+
 
 def url_base_de_datos(instance_path):
     """En local usamos SQLite; si existe DATABASE_URL (Render), PostgreSQL."""
     url = os.environ.get("DATABASE_URL")
     if not url:
-        return "sqlite:///" + os.path.join(instance_path, "lectoafin.db")
+        return "sqlite:///" + os.path.join(instance_path, "bookcrush.db")
     # SQLAlchemy necesita saber qué "driver" usar para hablar con PostgreSQL
     for prefijo in ("postgres://", "postgresql://"):
         if url.startswith(prefijo):
@@ -42,7 +46,12 @@ def create_app():
         MIN_LIBROS_COMUNES=2,   # nº mínimo de libros que gustan a ambos
         # Si se define, el alumnado necesita este código para registrarse
         CODIGO_REGISTRO=os.environ.get("CODIGO_REGISTRO", ""),
+        # False: el alias SOLO puede salir del generador (listas_alias/). True: alias libre.
+        ALIAS_LIBRE=os.environ.get("ALIAS_LIBRE", "").lower() in ("1", "true", "si", "sí"),
     )
+
+    from . import alias
+    alias.iniciar(app)      # lee las listas de listas_alias/ una sola vez, al arrancar
 
     from .seguridad import comprobar_csrf, csrf_token
     app.before_request(comprobar_csrf)

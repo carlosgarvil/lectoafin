@@ -1,16 +1,17 @@
 {% extends "base.html" %}
-{% block titulo %}Afinidades{% endblock %}
+{% block titulo %}Tus matches lectores{% endblock %}
 {% block contenido %}
-<h1>Tus afinidades lectoras</h1>
+<h1>Tus matches lectores ✨</h1>
 <p class="nota">
-  La afinidad es el porcentaje de libros que os gustan a los dos sobre el total de libros que
-  le gustan a alguno de los dos (<em>índice de Jaccard</em>). Hay conexión a partir del
+  Un <strong>match lector</strong> es alguien que lee como tú: el porcentaje de libros que os
+  gustan a los dos sobre el total de libros que le gustan a alguno de los dos
+  (<em>índice de Jaccard</em>). Hay match a partir del
   {{ (config.UMBRAL_AFINIDAD * 100)|round|int }} % y con al menos {{ config.MIN_LIBROS_COMUNES }} libros en común.
 </p>
 
-<h2>📖 Conexiones <span class="pildora">{{ conexiones|length }}</span></h2>
+<h2 class="titulo-seccion"><span class="sticker" aria-hidden="true">🤝</span> Matches <span class="pildora">{{ conexiones|length }}</span></h2>
 {% if conexiones %}
-  <ul class="lista-afinidad">
+  <ul class="lista-afinidad" id="matches" data-total="{{ conexiones|length }}">
     {% for r in conexiones %}
       <li class="tarjeta conexion">
         <div class="cabecera-afinidad">
@@ -23,7 +24,11 @@
     {% endfor %}
   </ul>
 {% else %}
-  <p class="vacio">Aún no tienes conexiones. ¡Valora más libros para encontrarlas!</p>
+  <div class="estado-vacio">
+    <div class="sticker" aria-hidden="true">🔍</div>
+    <p>Aún no tienes matches. ¡Valora más libros para encontrarlos!</p>
+    <a class="boton" href="{{ url_for('main.descubrir') }}">Ir a Descubrir</a>
+  </div>
 {% endif %}
 
 {% if resto %}
@@ -36,4 +41,7 @@
     </ul>
   </details>
 {% endif %}
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='confeti.js') }}"></script>
 {% endblock %}

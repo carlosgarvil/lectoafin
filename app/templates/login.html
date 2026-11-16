@@ -2,7 +2,8 @@
 {% block titulo %}Entrar{% endblock %}
 {% block contenido %}
 <form method="post" class="tarjeta formulario">
-  <h1>Entrar</h1>
+  <span class="sticker esquina" style="--giro: 12deg" aria-hidden="true">👋</span>
+  <h1>¡Hola de nuevo!</h1>
   <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
   <label>Alias <input name="alias" required autofocus autocomplete="username"></label>
   <label>Contraseña <input name="password" type="password" required autocomplete="current-password"></label>

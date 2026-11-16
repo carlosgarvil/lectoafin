@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-4 -4 128 128" role="img" aria-labelledby="logo-titulo">
+  <title id="logo-titulo">Bookcrush</title>
+  <!-- Logo tipo "pegatina": corazón rosa con borde blanco y un libro abierto dentro -->
+  <defs>
+    <path id="corazon" d="M60 106 C26 84 10 64 10 41 C10 24 23 12 38 12 C48 12 56 18 60 27 C64 18 72 12 82 12 C97 12 110 24 110 41 C110 64 94 84 60 106 Z"/>
+  </defs>
+  <g transform="rotate(-8 60 60)">
+    <use href="#corazon" transform="translate(0 5)" fill="#3a2540" opacity=".16" stroke="#3a2540" stroke-width="12" stroke-linejoin="round"/>
+    <use href="#corazon" fill="#fff" stroke="#fff" stroke-width="12" stroke-linejoin="round"/>
+    <use href="#corazon" fill="#ff8fb8"/>
+    <path d="M24 36 Q27 25 38 23" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".75"/>
+    <!-- libro abierto -->
+    <path d="M60 52 Q47 43 32 47 L32 77 Q47 73 60 82 Z" fill="#fff" stroke="#3a2540" stroke-width="3.5" stroke-linejoin="round"/>
+    <path d="M60 52 Q73 43 88 47 L88 77 Q73 73 60 82 Z" fill="#fff" stroke="#3a2540" stroke-width="3.5" stroke-linejoin="round"/>
+    <g fill="none" stroke="#b9a3ff" stroke-width="2.6" stroke-linecap="round">
+      <path d="M38 56 Q46 54 54 58"/><path d="M38 63 Q46 61 54 65"/><path d="M38 70 Q46 68 54 72"/>
+      <path d="M82 56 Q74 54 66 58"/><path d="M82 63 Q74 61 66 65"/><path d="M82 70 Q74 68 66 72"/>
+    </g>
+  </g>
+  <!-- chispa amarilla -->
+  <path d="M104 6 l3.5 8 8 3.5 -8 3.5 -3.5 8 -3.5 -8 -8 -3.5 8 -3.5 z" fill="#ffe27a" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
+</svg>

@@ -12,4 +12,11 @@
   <button class="boton">Guardar</button>
   <a href="{{ url_for('admin.libros') }}">Cancelar</a>
 </form>
+
+<form method="post" action="{{ url_for('admin.buscar_sinopsis', libro_id=libro.id) }}" class="formulario"
+      onsubmit="return confirm('Se sustituirá la sinopsis actual por la que encuentre en Internet. ¿Seguir?')">
+  <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+  <p class="nota">¿No tienes sinopsis? Búscala en Google Books (en español, si hay clave de API) u Open Library.</p>
+  <button class="boton secundario">🔎 Buscar sinopsis automáticamente</button>
+</form>
 {% endblock %}

@@ -1,0 +1,35 @@
+# PERSONAJES FEMENINOS
+# Un nombre por línea. Las líneas que empiezan por # se ignoran.
+# Puedes añadir o borrar nombres libremente: el generador usa los que haya aquí.
+# Estos nombres se combinan con la forma femenina de los adjetivos.
+
+Alicia
+Hermione
+Katniss
+Matilda
+Dulcinea
+Heidi
+Jo
+Elizabeth
+Jane
+Pippi
+Coraline
+Momo
+Mafalda
+Lyra
+Arya
+Wendy
+Dorothy
+Anne
+Antígona
+Penélope
+Sherezade
+Tris
+Annabeth
+Luna
+Ginny
+Mulán
+Emma
+Mary
+Nausicaa
+Atenea

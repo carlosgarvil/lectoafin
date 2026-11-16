@@ -1,12 +1,18 @@
-"""Comandos de terminal para el profesorado.
+"""Bookcrush · comandos de terminal para el profesorado.
 
     flask --app run crear-admin           -> crea una cuenta de administración
     flask --app run datos-ejemplo         -> carga libros y alumnado ficticio para probar
+    flask --app run datos-ejemplo --catalogo RegEjemplares.xls
+                                          -> igual, pero con los libros del catálogo de Séneca
+    flask --app run importar-seneca RegEjemplares.xls [--ocultos] [--open-library]
+                                          -> importa el catálogo real de la biblioteca
 """
 import random
 
 import click
 
+from . import openlibrary, sinopsis
+from .catalogo_seneca import clave_texto, leer_catalogo
 from .extensions import db
 from .models import Libro, Usuario, Voto
 
@@ -34,7 +40,61 @@ LIBROS_EJEMPLO = [
 ]
 
 
+def importar_catalogo(ruta, activos=True, usar_open_library=False):
+    """Añade a la BD los libros del .xls de Séneca que aún no estén. Devuelve (nuevos, repetidos)."""
+    existentes = {(clave_texto(l.titulo), clave_texto(l.autor)) for l in Libro.query.all()}
+    ids_ol = {l.openlibrary_id for l in Libro.query.filter(Libro.openlibrary_id.isnot(None))}
+    nuevos = repetidos = 0
+
+    for datos in leer_catalogo(ruta):
+        if (clave_texto(datos["titulo"]), clave_texto(datos["autor"])) in existentes:
+            repetidos += 1
+            continue
+        temas = "Temas: " + ", ".join(datos["temas"]) + "." if datos["temas"] else ""
+        libro = Libro(titulo=datos["titulo"][:200], autor=datos["autor"][:200],
+                      sinopsis=temas, activo=activos)
+
+        # Opcional: completar portada y año preguntando a Open Library por el ISBN
+        if usar_open_library and datos["isbn"]:
+            try:
+                info = openlibrary.buscar_por_isbn(datos["isbn"])
+            except Exception as exc:          # sin conexión, API caída...
+                click.echo(f"  ! Open Library no responde ({exc}); sigo sin portadas.")
+                usar_open_library = False
+                info = None
+            if info:
+                libro.portada_url = info["portada_url"]
+                libro.anio = info["anio"]
+                if info["openlibrary_id"] and info["openlibrary_id"] not in ids_ol:
+                    libro.openlibrary_id = info["openlibrary_id"]
+                    ids_ol.add(libro.openlibrary_id)
+            texto, _ = sinopsis.buscar_sinopsis(libro.titulo, libro.autor, datos["isbn"],
+                                                libro.openlibrary_id or "")
+            if texto:
+                libro.sinopsis = texto + ("\n\n" + temas if temas else "")
+            marcas = ("P" if libro.portada_url else "·") + ("S" if texto else "·")
+            click.echo(f"  {marcas} {libro.titulo}")
+
+        db.session.add(libro)
+        existentes.add((clave_texto(libro.titulo), clave_texto(libro.autor)))
+        nuevos += 1
+    db.session.commit()
+    return nuevos, repetidos
+
+
 def register_cli(app):
+
+    @app.cli.command("importar-seneca")
+    @click.argument("ruta", type=click.Path(exists=True, dir_okay=False))
+    @click.option("--ocultos", is_flag=True,
+                  help="Importa los libros ocultos, para activarlos uno a uno desde el panel.")
+    @click.option("--open-library", "usar_ol", is_flag=True,
+                  help="Busca portada y año por ISBN en Open Library (tarda ~1 s por libro).")
+    def importar_seneca(ruta, ocultos, usar_ol):
+        """Importa el catálogo exportado de Séneca (.xls, una fila por ejemplar)."""
+        nuevos, repetidos = importar_catalogo(ruta, activos=not ocultos, usar_open_library=usar_ol)
+        click.echo(f"{nuevos} libros nuevos ({'ocultos' if ocultos else 'activos'}); "
+                   f"{repetidos} omitidos por repetidos (mismo título y autor).")
 
     @app.cli.command("crear-admin")
     @click.option("--alias", prompt="Alias del admin")
@@ -50,14 +110,37 @@ def register_cli(app):
         db.session.commit()
         click.echo(f"Admin «{alias}» listo.")
 
+    @app.cli.command("completar-sinopsis")
+    @click.option("--limite", default=0, help="Máximo de libros a consultar (0 = todos).")
+    def completar_sinopsis(limite):
+        """Busca sinopsis en Google Books / Open Library para los libros que no la tienen."""
+        pendientes = [l for l in Libro.query.order_by(Libro.id) if sinopsis.sin_sinopsis_real(l)]
+        if limite:
+            pendientes = pendientes[:limite]
+        encontradas = 0
+        for libro in pendientes:
+            fuente = sinopsis.completar(libro)
+            encontradas += bool(fuente)
+            click.echo(f"  {'✓ ' + fuente if fuente else '· sin resultado':16} {libro.titulo}")
+            db.session.commit()          # guardamos libro a libro: si se corta, no se pierde lo hecho
+        click.echo(f"{encontradas} de {len(pendientes)} libros con sinopsis nueva.")
+
     @app.cli.command("datos-ejemplo")
     @click.option("--alumnos", default=12, help="Nº de alumnos ficticios")
-    def datos_ejemplo(alumnos):
+    @click.option("--catalogo", type=click.Path(exists=True, dir_okay=False),
+                  help="Usa los libros de un .xls de Séneca en vez de los 20 de ejemplo.")
+    @click.option("--open-library", "usar_ol", is_flag=True,
+                  help="Con --catalogo: busca portadas y año por ISBN en Open Library.")
+    def datos_ejemplo(alumnos, catalogo, usar_ol):
         """Carga libros de ejemplo y alumnado ficticio con votos aleatorios."""
-        for titulo, autor, anio in LIBROS_EJEMPLO:
-            if not Libro.query.filter_by(titulo=titulo).first():
-                db.session.add(Libro(titulo=titulo, autor=autor, anio=anio))
-        db.session.commit()
+        if catalogo:
+            nuevos, repetidos = importar_catalogo(catalogo, usar_open_library=usar_ol)
+            click.echo(f"Catálogo: {nuevos} libros nuevos, {repetidos} omitidos por repetidos.")
+        else:
+            for titulo, autor, anio in LIBROS_EJEMPLO:
+                if not Libro.query.filter_by(titulo=titulo).first():
+                    db.session.add(Libro(titulo=titulo, autor=autor, anio=anio))
+            db.session.commit()
 
         libros = Libro.query.filter_by(activo=True).all()
         random.seed(42)  # resultados reproducibles

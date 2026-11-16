@@ -1,0 +1,57 @@
+# ADJETIVOS
+# Uno por línea. Las líneas que empiezan por # se ignoran.
+#
+# Si la palabra cambia según el género, escribe las dos formas separadas por /
+#     masculino / femenino      ->  explorador / exploradora
+# Si es igual para todos, escríbela una sola vez:
+#     veloz
+#
+# Consejo: usa palabras positivas o graciosas. Evita las que hablen del físico
+# o se puedan usar para burlarse de alguien.
+
+explorador / exploradora
+dormilón / dormilona
+soñador / soñadora
+curioso / curiosa
+despistado / despistada
+aventurero / aventurera
+misterioso / misteriosa
+intrépido / intrépida
+risueño / risueña
+cósmico / cósmica
+galáctico / galáctica
+mágico / mágica
+lector / lectora
+viajero / viajera
+nocturno / nocturna
+sabio / sabia
+filósofo / filósofa
+inventor / inventora
+épico / épica
+legendario / legendaria
+tranquilo / tranquila
+bailarín / bailarina
+cantarín / cantarina
+goloso / golosa
+cocinero / cocinera
+saltarín / saltarina
+valeroso / valerosa
+sigiloso / sigilosa
+ingenioso / ingeniosa
+divertido / divertida
+valiente
+veloz
+feliz
+audaz
+rebelde
+poeta
+detective
+pirata
+astronauta
+ninja
+brillante
+imparable
+invencible
+estelar
+genial
+alegre

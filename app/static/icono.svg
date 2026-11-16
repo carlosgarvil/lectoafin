@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Bookcrush">
+  <!-- Icono cuadrado (sin esquinas redondeadas): lo usan el manifest y el icono de iOS,
+       que ya recortan la forma por su cuenta. -->
+  <defs>
+    <linearGradient id="fondo" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e3d6ff"/>
+      <stop offset="1" stop-color="#ffd3e4"/>
+    </linearGradient>
+    <path id="corazon" d="M60 106 C26 84 10 64 10 41 C10 24 23 12 38 12 C48 12 56 18 60 27 C64 18 72 12 82 12 C97 12 110 24 110 41 C110 64 94 84 60 106 Z"/>
+  </defs>
+  <rect width="120" height="120" fill="url(#fondo)"/>
+  <g transform="translate(60 61) scale(.68) translate(-60 -59) rotate(-8 60 60)">
+    <use href="#corazon" transform="translate(0 5)" fill="#3a2540" opacity=".14" stroke="#3a2540" stroke-width="12" stroke-linejoin="round"/>
+    <use href="#corazon" fill="#fff" stroke="#fff" stroke-width="12" stroke-linejoin="round"/>
+    <use href="#corazon" fill="#ff8fb8"/>
+    <path d="M24 36 Q27 25 38 23" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".75"/>
+    <path d="M60 52 Q47 43 32 47 L32 77 Q47 73 60 82 Z" fill="#fff" stroke="#3a2540" stroke-width="3.5" stroke-linejoin="round"/>
+    <path d="M60 52 Q73 43 88 47 L88 77 Q73 73 60 82 Z" fill="#fff" stroke="#3a2540" stroke-width="3.5" stroke-linejoin="round"/>
+    <g fill="none" stroke="#b9a3ff" stroke-width="2.6" stroke-linecap="round">
+      <path d="M38 56 Q46 54 54 58"/><path d="M38 63 Q46 61 54 65"/><path d="M38 70 Q46 68 54 72"/>
+      <path d="M82 56 Q74 54 66 58"/><path d="M82 63 Q74 61 66 65"/><path d="M82 70 Q74 68 66 72"/>
+    </g>
+  </g>
+</svg>

@@ -5,8 +5,10 @@
 <h1>Mis libros</h1>
 <p class="nota">¿Has cambiado de opinión? Pulsa en «Cambiar» para mover el libro a la otra lista.</p>
 
-{% for titulo, lista, icono in [("Me gustan", gustan, "♥"), ("No me gustan", no_gustan, "✕")] %}
-  <h2>{{ icono }} {{ titulo }} <span class="pildora">{{ lista|length }}</span></h2>
+{% for titulo, lista, icono, vacio in [
+     ("Mis crushes", gustan, "💖", "Aún no tienes ningún crush lector. ¡Ve a Descubrir!"),
+     ("Paso de ellos", no_gustan, "🙅", "Todavía no has pasado de ningún libro.")] %}
+  <h2 class="titulo-seccion"><span class="sticker" aria-hidden="true">{{ icono }}</span> {{ titulo }} <span class="pildora">{{ lista|length }}</span></h2>
   {% if lista %}
     <ul class="rejilla">
       {% for libro in lista %}
@@ -24,7 +26,7 @@
       {% endfor %}
     </ul>
   {% else %}
-    <p class="vacio">Todavía no hay libros aquí.</p>
+    <p class="estado-vacio">{{ vacio }}</p>
   {% endif %}
 {% endfor %}
 {% endblock %}

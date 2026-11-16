@@ -1,0 +1,16 @@
+{
+  "name": "Bookcrush · encuentra tu flechazo lector",
+  "short_name": "Bookcrush",
+  "description": "Valora los libros de la biblioteca del instituto y encuentra compañeros de lectura.",
+  "lang": "es",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#fff7fb",
+  "theme_color": "#ffd3e4",
+  "icons": [
+    { "src": "/static/icono-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/static/icono-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/static/icono.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

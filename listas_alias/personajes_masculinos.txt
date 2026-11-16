@@ -1,0 +1,35 @@
+# PERSONAJES MASCULINOS
+# Un nombre por línea. Las líneas que empiezan por # se ignoran.
+# Puedes añadir o borrar nombres libremente: el generador usa los que haya aquí.
+# Estos nombres se combinan con la forma masculina de los adjetivos.
+
+Harry
+Frodo
+Sherlock
+Quijote
+Sancho
+Lazarillo
+Ulises
+Drácula
+Robinson
+Pinocho
+Peter
+Bilbo
+Gandalf
+Percy
+Bastian
+Atreyu
+Tom
+Huck
+Aladino
+Simbad
+Gulliver
+Oliver
+Manolito
+Watson
+Aragorn
+Ron
+Neville
+Naruto
+Astérix
+Tintín

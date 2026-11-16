@@ -2,11 +2,18 @@
 {% block titulo %}Inicio{% endblock %}
 {% block contenido %}
 <section class="portada-inicio">
-  <h1>Encuentra a tus compañeros de lectura</h1>
+  <span class="decoracion d1 sticker flotando" aria-hidden="true">📚</span>
+  <span class="decoracion d2 sticker flotando" aria-hidden="true">⭐</span>
+  <span class="decoracion d3 sticker flotando" aria-hidden="true">💜</span>
+  <span class="decoracion d4 sticker flotando" aria-hidden="true">✨</span>
+
+  <img class="logo-grande" src="{{ url_for('static', filename='logo.svg') }}" alt="" width="180" height="180">
+  <h1>Bookcrush</h1>
+  <p class="lema">encuentra tu flechazo lector</p>
   <p class="destacado">
-    Valora los libros de la biblioteca del instituto con <strong>me gusta</strong> o
-    <strong>no me gusta</strong>. Lectoafín compara tus gustos con los del resto y te muestra
-    con quién tienes más afinidad lectora.
+    Desliza los libros de la biblioteca del insti: <strong>¡crush!</strong> si te apetece leerlo,
+    <strong>paso</strong> si no es lo tuyo. Bookcrush compara tus gustos con los del resto y te
+    enseña quién lee como tú: tus futuros compañeros y compañeras de lectura.
   </p>
   <div class="acciones">
     <a class="boton" href="{{ url_for('auth.registro') }}">Crear cuenta</a>
@@ -14,9 +21,9 @@
   </div>
 
   <ol class="pasos">
-    <li><strong>Descubre</strong> los libros que ha elegido el profesorado.</li>
-    <li><strong>Valora</strong> cada libro: ¿te gusta o no?</li>
-    <li><strong>Conecta</strong> con quien comparte tus gustos y forma tu club de lectura.</li>
+    <li><span class="sticker" aria-hidden="true">👀</span><span><strong>Descubre</strong> los libros que ha elegido el profe.</span></li>
+    <li><span class="sticker" style="--giro: 8deg" aria-hidden="true">💘</span><span><strong>Elige</strong>: ¿crush o paso?</span></li>
+    <li><span class="sticker" aria-hidden="true">🤝</span><span><strong>Haz match</strong> con quien comparte tus gustos y forma tu club de lectura.</span></li>
   </ol>
   <p class="nota">Usa un alias, no tu nombre completo. Aquí solo se comparten gustos lectores.</p>
 </section>

@@ -14,6 +14,8 @@ const mazo = document.getElementById("mazo");
 const contador = document.getElementById("contador");
 const botones = document.getElementById("botones");
 const CSRF = document.querySelector('meta[name="csrf-token"]').content;
+const MENOS_MOVIMIENTO = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const PEGATINAS = ["📖", "⭐", "💜", "✨", "🌈", "🍓", "🌙", "🦋"];
 
 let libroActual = null;
 let ocupado = false;   // evita votos dobles mientras esperamos al servidor
@@ -30,6 +32,8 @@ async function votar(meGusta) {
   ocupado = true;
   const tarjeta = mazo.querySelector(".tarjeta-libro");
   tarjeta.classList.add(meGusta ? "sale-derecha" : "sale-izquierda");
+  rebotar(document.getElementById(meGusta ? "btn-si" : "btn-no"));
+  if (meGusta) lanzarCorazones();
 
   try {
     const respuesta = await fetch("/api/votar", {
@@ -65,8 +69,9 @@ function mostrar({ libro, pendientes }) {
     contador.textContent = "¡Has valorado todos los libros!";
     botones.hidden = true;
     const fin = crear("div", "tarjeta fin");
-    fin.append(crear("p", "", "📚 No quedan libros por valorar."));
-    const enlace = crear("a", "boton", "Ver mis afinidades");
+    fin.append(crear("span", "sticker", "🏆"));
+    fin.append(crear("p", "", "¡Lo has petado! No quedan libros por valorar."));
+    const enlace = crear("a", "boton", "Ver mis matches");
     enlace.href = "/afinidades";
     fin.append(enlace);
     mazo.append(fin);
@@ -96,8 +101,14 @@ function mostrar({ libro, pendientes }) {
   if (libro.sinopsis) info.append(crear("p", "sinopsis", libro.sinopsis));
   tarjeta.append(info);
 
-  tarjeta.append(crear("div", "sello sello-si", "ME GUSTA"));
-  tarjeta.append(crear("div", "sello sello-no", "NO"));
+  tarjeta.append(crear("div", "sello sello-si", "¡CRUSH!"));
+  tarjeta.append(crear("div", "sello sello-no", "PASO"));
+
+  // Pegatina decorativa (siempre la misma para cada libro)
+  const pegatina = crear("span", "sticker esquina", PEGATINAS[libro.id % PEGATINAS.length]);
+  pegatina.setAttribute("aria-hidden", "true");
+  pegatina.style.setProperty("--giro", (libro.id % 2 ? 10 : -10) + "deg");
+  tarjeta.append(pegatina);
 
   hacerArrastrable(tarjeta);
   mazo.append(tarjeta);
@@ -136,6 +147,30 @@ function hacerArrastrable(tarjeta) {
   };
   tarjeta.addEventListener("pointerup", soltar);
   tarjeta.addEventListener("pointercancel", soltar);
+}
+
+// ---------------------------------------------------------------- Micro-animaciones
+
+// Reinicia la animación de "rebote" del botón (quitar la clase, forzar reflow y volver a ponerla)
+function rebotar(boton) {
+  boton.classList.remove("rebote");
+  void boton.offsetWidth;
+  boton.classList.add("rebote");
+}
+
+// Unos corazoncitos que suben desde el botón de "¡CRUSH!"
+function lanzarCorazones() {
+  if (MENOS_MOVIMIENTO) return;
+  const caja = document.getElementById("btn-si").getBoundingClientRect();
+  for (let i = 0; i < 6; i++) {
+    const c = crear("span", "corazoncito", ["💖", "💗", "💕"][i % 3]);
+    c.style.left = caja.left + caja.width / 2 - 12 + "px";
+    c.style.top = caja.top + "px";
+    c.style.setProperty("--dx", (Math.random() * 120 - 60) + "px");
+    c.style.animationDelay = i * 60 + "ms";
+    document.body.append(c);
+    c.addEventListener("animationend", () => c.remove());
+  }
 }
 
 // ---------------------------------------------------------------- Botones y teclado
