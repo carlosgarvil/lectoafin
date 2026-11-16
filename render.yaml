@@ -2,7 +2,7 @@
 # Render lo lee al crear un "New > Blueprint" y crea la web y la base de datos.
 services:
   - type: web
-    name: lectoafin
+    name: bookcrush
     runtime: python
     plan: free
     buildCommand: pip install -r requirements.txt
